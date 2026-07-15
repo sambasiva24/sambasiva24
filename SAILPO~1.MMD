@@ -1,0 +1,69 @@
+erDiagram
+  SPT_IDENTITY ||--o{ SPT_IDENTITY_REQUEST : "requester / target"
+  SPT_IDENTITY_REQUEST ||--|{ SPT_IDENTITY_REQUEST_ITEM : "contains items"
+  SPT_IDENTITY_REQUEST ||--o| SPT_TASK_RESULT : "task_result_id"
+  SPT_WORKFLOW_CASE ||--|| SPT_TASK_RESULT : "paired 1:1"
+  SPT_WORKFLOW_CASE ||--o{ SPT_WORK_ITEM : "spawns approvals"
+  SPT_IDENTITY ||--o{ SPT_WORK_ITEM : "owner = approver"
+  SPT_WORK_ITEM ||--o| SPT_WORK_ITEM_ARCHIVE : "archived copy"
+  SPT_IDENTITY_REQUEST ||--o{ SPT_PROVISIONING_TRANSACTION : "by request name"
+  SPT_IDENTITY_REQUEST ||--o{ SPT_AUDIT_EVENT : "by request id"
+  SPT_IDENTITY_REQUEST ||--o{ SPT_REQUEST : "sunrise / sunset"
+  SPT_IDENTITY_REQUEST_ITEM }o--o| SPT_BUNDLE : "role, by name"
+  SPT_IDENTITY_REQUEST_ITEM }o--o| SPT_MANAGED_ATTRIBUTE : "entitlement, by value"
+  SPT_IDENTITY_REQUEST_ITEM }o--o| SPT_APPLICATION : "target app, by name"
+  SPT_APPLICATION ||--o{ SPT_LINK : "has accounts"
+  SPT_IDENTITY ||--o{ SPT_LINK : "owns accounts"
+
+  SPT_IDENTITY_REQUEST {
+    string id PK
+    string name "request number"
+    string requester_id FK
+    string target_id FK
+    string task_result_id FK
+    string state
+    string completion_status
+  }
+  SPT_IDENTITY_REQUEST_ITEM {
+    string id PK
+    string identity_request_id FK
+    string application
+    string name "attr or role"
+    string value
+    string operation "Add / Remove"
+    string approval_state
+    string provisioning_state
+  }
+  SPT_WORKFLOW_CASE {
+    string id PK
+    clob attributes "plan + approvals XML"
+  }
+  SPT_TASK_RESULT {
+    string id PK
+    date completed
+    string completion_status
+  }
+  SPT_WORK_ITEM {
+    string id PK
+    string owner_id FK
+    string identity_request_id
+    string type "Approval / Form"
+    string state
+  }
+  SPT_PROVISIONING_TRANSACTION {
+    string id PK
+    string identity_name
+    string application_name
+    string status "Success / Failed / Pending"
+  }
+  SPT_AUDIT_EVENT {
+    string id PK
+    string action
+    string source
+    string target
+  }
+  SPT_IDENTITY {
+    string id PK
+    string name
+    string display_name
+  }
